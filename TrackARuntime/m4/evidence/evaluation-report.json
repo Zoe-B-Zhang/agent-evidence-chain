@@ -1,0 +1,207 @@
+{
+  "generated_at": "2026-08-12T09:16:58.314753+00:00",
+  "dataset_version": 1,
+  "total": 22,
+  "successes": 10,
+  "success_rate": 0.455,
+  "baseline": 0.45,
+  "baseline_meta": {
+    "baseline": 0.45,
+    "source": "explicit",
+    "note": "user-provided baseline"
+  },
+  "gate_pass": true,
+  "failure_distribution": {
+    "OVER_EDIT": 1,
+    "GUARDRAIL_BLOCK": 3,
+    "RETRIEVAL_MISS": 1,
+    "TEST_ENV": 1,
+    "REQ_MISREAD": 1,
+    "PATCH_INVALID": 1,
+    "PLAN_ERROR": 1,
+    "MODEL_TIMEOUT": 1,
+    "STALE_INDEX": 1,
+    "JUDGE_BIAS": 1
+  },
+  "remediation_advice": {
+    "OVER_EDIT": "[\u8fc7\u5ea6\u4fee\u6539] \u68c0\u6d4b\u4fe1\u53f7\uff1adiff too large \u2192 \u6309\u8be5\u8f74\u6392\u67e5\u5e76\u52a0\u56de\u5f52\u573a\u666f\u3002",
+    "GUARDRAIL_BLOCK": "[\u62a4\u680f\u62e6\u622a] \u68c0\u6d4b\u4fe1\u53f7\uff1aformality < threshold \u2192 \u6309\u8be5\u8f74\u6392\u67e5\u5e76\u52a0\u56de\u5f52\u573a\u666f\u3002",
+    "RETRIEVAL_MISS": "[\u68c0\u7d22/\u5de5\u5177\u9009\u9519] \u68c0\u6d4b\u4fe1\u53f7\uff1awrong file or geocode \u2192 \u6309\u8be5\u8f74\u6392\u67e5\u5e76\u52a0\u56de\u5f52\u573a\u666f\u3002",
+    "TEST_ENV": "[\u73af\u5883\u5931\u8d25] \u68c0\u6d4b\u4fe1\u53f7\uff1atimeout, missing dep \u2192 \u6309\u8be5\u8f74\u6392\u67e5\u5e76\u52a0\u56de\u5f52\u573a\u666f\u3002",
+    "REQ_MISREAD": "[\u9700\u6c42\u7406\u89e3\u9519\u8bef] \u68c0\u6d4b\u4fe1\u53f7\uff1aeval assertion fail \u2192 \u6309\u8be5\u8f74\u6392\u67e5\u5e76\u52a0\u56de\u5f52\u573a\u666f\u3002",
+    "PATCH_INVALID": "[\u8f93\u51fa/\u8865\u4e01\u65e0\u6548] \u68c0\u6d4b\u4fe1\u53f7\uff1aapply failed \u2192 \u6309\u8be5\u8f74\u6392\u67e5\u5e76\u52a0\u56de\u5f52\u573a\u666f\u3002",
+    "PLAN_ERROR": "[\u8ba1\u5212\u9519\u8bef] \u68c0\u6d4b\u4fe1\u53f7\uff1awrong steps in trace \u2192 \u6309\u8be5\u8f74\u6392\u67e5\u5e76\u52a0\u56de\u5f52\u573a\u666f\u3002",
+    "MODEL_TIMEOUT": "[\u6a21\u578b/\u8def\u7531\u8d85\u65f6] \u68c0\u6d4b\u4fe1\u53f7\uff1acircuit open \u2192 \u6309\u8be5\u8f74\u6392\u67e5\u5e76\u52a0\u56de\u5f52\u573a\u666f\u3002",
+    "STALE_INDEX": "[\u68c0\u7d22/\u7d22\u5f15\u8fc7\u671f] \u68c0\u6d4b\u4fe1\u53f7\uff1adoc_version lag, stale chunk cited \u2192 \u6309\u8be5\u8f74\u6392\u67e5\u5e76\u52a0\u56de\u5f52\u573a\u666f\u3002",
+    "JUDGE_BIAS": "[\u8bc4\u6d4b\u5668\u504f\u5dee] \u68c0\u6d4b\u4fe1\u53f7\uff1ajudge-human disagreement on regression gate \u2192 \u6309\u8be5\u8f74\u6392\u67e5\u5e76\u52a0\u56de\u5f52\u573a\u666f\u3002"
+  },
+  "category_split": {
+    "retrieval": {
+      "total": 5,
+      "successes": 2,
+      "success_rate": 0.4
+    },
+    "generation": {
+      "total": 13,
+      "successes": 8,
+      "success_rate": 0.615
+    },
+    "mixed": {
+      "total": 4,
+      "successes": 0,
+      "success_rate": 0.0
+    }
+  },
+  "p95_latency_ms": 5,
+  "judge_sample": [
+    "judge disabled (deterministic teaching mode)",
+    "judge disabled (deterministic teaching mode)",
+    "judge disabled (deterministic teaching mode)"
+  ],
+  "results": [
+    {
+      "id": "S01",
+      "success": true,
+      "latencyMs": 5,
+      "category": "generation"
+    },
+    {
+      "id": "S02",
+      "success": true,
+      "latencyMs": 5,
+      "category": "generation"
+    },
+    {
+      "id": "S03",
+      "success": true,
+      "latencyMs": 5,
+      "category": "generation"
+    },
+    {
+      "id": "S04",
+      "success": true,
+      "latencyMs": 5,
+      "category": "generation"
+    },
+    {
+      "id": "S05",
+      "success": true,
+      "latencyMs": 5,
+      "category": "generation"
+    },
+    {
+      "id": "S06",
+      "success": true,
+      "latencyMs": 5,
+      "category": "retrieval"
+    },
+    {
+      "id": "S07",
+      "success": true,
+      "latencyMs": 5,
+      "category": "generation"
+    },
+    {
+      "id": "S08",
+      "success": true,
+      "latencyMs": 5,
+      "category": "generation"
+    },
+    {
+      "id": "S09",
+      "success": false,
+      "failure_code": "OVER_EDIT",
+      "latencyMs": 5,
+      "category": "generation"
+    },
+    {
+      "id": "S10",
+      "success": false,
+      "failure_code": "GUARDRAIL_BLOCK",
+      "latencyMs": 5,
+      "category": "generation"
+    },
+    {
+      "id": "S11",
+      "success": false,
+      "failure_code": "RETRIEVAL_MISS",
+      "latencyMs": 5,
+      "category": "retrieval"
+    },
+    {
+      "id": "S12",
+      "success": false,
+      "failure_code": "TEST_ENV",
+      "latencyMs": 5,
+      "category": "mixed"
+    },
+    {
+      "id": "S13",
+      "success": false,
+      "failure_code": "REQ_MISREAD",
+      "latencyMs": 5,
+      "category": "generation"
+    },
+    {
+      "id": "S14",
+      "success": false,
+      "failure_code": "PATCH_INVALID",
+      "latencyMs": 5,
+      "category": "generation"
+    },
+    {
+      "id": "S15",
+      "success": false,
+      "failure_code": "PLAN_ERROR",
+      "latencyMs": 5,
+      "category": "retrieval"
+    },
+    {
+      "id": "S16",
+      "success": false,
+      "failure_code": "GUARDRAIL_BLOCK",
+      "latencyMs": 5,
+      "category": "generation"
+    },
+    {
+      "id": "S17",
+      "success": false,
+      "failure_code": "GUARDRAIL_BLOCK",
+      "latencyMs": 5,
+      "category": "mixed"
+    },
+    {
+      "id": "S18",
+      "success": false,
+      "failure_code": "MODEL_TIMEOUT",
+      "latencyMs": 5,
+      "category": "mixed"
+    },
+    {
+      "id": "S19",
+      "success": true,
+      "latencyMs": 5,
+      "category": "retrieval"
+    },
+    {
+      "id": "S20",
+      "success": true,
+      "latencyMs": 5,
+      "category": "generation"
+    },
+    {
+      "id": "S21",
+      "success": false,
+      "failure_code": "STALE_INDEX",
+      "latencyMs": 5,
+      "category": "retrieval"
+    },
+    {
+      "id": "S22",
+      "success": false,
+      "failure_code": "JUDGE_BIAS",
+      "latencyMs": 5,
+      "category": "mixed"
+    }
+  ]
+}

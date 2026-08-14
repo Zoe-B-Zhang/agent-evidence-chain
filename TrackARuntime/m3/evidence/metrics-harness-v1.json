@@ -1,0 +1,20 @@
+{
+  "generated_at": "2026-07-27T13:31:08.239455+00:00",
+  "run_id": "harness-v1",
+  "task": "harness:v1",
+  "model": "mock-small",
+  "route_tier": "simple",
+  "latency_ms": {
+    "samples": [],
+    "p95": 0,
+    "total": 0
+  },
+  "tokens": {
+    "input": 15,
+    "output": 2
+  },
+  "cost_usd": 1.9e-06,
+  "rate_limited": false,
+  "harness_action": "promote",
+  "guardrail_ok": true
+}

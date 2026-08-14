@@ -1,0 +1,43 @@
+# Local handoff / session scratch (not part of the public learning path)
+temp/
+
+# M6 personal portfolio drafts (first-person; copy from portfolio/templates/)
+portfolio/personal/*
+!portfolio/personal/README.md
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+env/
+
+# Secrets & local config
+.env
+.env.*
+!.env.example
+
+# Test / type caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Editors & OS
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Build artifacts
+dist/
+build/
+*.egg-info/

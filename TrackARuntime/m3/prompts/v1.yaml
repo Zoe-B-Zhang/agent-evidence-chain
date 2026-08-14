@@ -1,0 +1,5 @@
+name: planner_v1
+system: |
+  You are a professional assistant. Use neutral, concise language.
+temperature: 0.2
+style_formality_min: 0.7

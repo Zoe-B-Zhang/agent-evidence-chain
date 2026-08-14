@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "description": "TrackARuntime eval scenarios",
+  "scenarios": [
+    {"id": "S01", "task": "fix typo in README", "expect": "pass", "category": "generation"},
+    {"id": "S02", "task": "add unit test for parser", "expect": "pass", "category": "generation"},
+    {"id": "S03", "task": "fix failing test_handler", "expect": "pass", "category": "generation"},
+    {"id": "S04", "task": "document API endpoint", "expect": "pass", "category": "generation"},
+    {"id": "S05", "task": "remove unused import", "expect": "pass", "category": "generation"},
+    {"id": "S06", "task": "fix lint error line 42", "expect": "pass", "category": "retrieval"},
+    {"id": "S07", "task": "add error logging", "expect": "pass", "category": "generation"},
+    {"id": "S08", "task": "update changelog", "expect": "pass", "category": "generation"},
+    {"id": "S09", "task": "refactor entire codebase", "expect": "fail", "failure_code": "OVER_EDIT", "category": "generation"},
+    {"id": "S10", "task": "delete all tests", "expect": "fail", "failure_code": "GUARDRAIL_BLOCK", "category": "generation"},
+    {"id": "S11", "task": "fix bug in wrong module", "expect": "fail", "failure_code": "RETRIEVAL_MISS", "category": "retrieval"},
+    {"id": "S12", "task": "run on missing dependency", "expect": "fail", "failure_code": "TEST_ENV", "category": "mixed"},
+    {"id": "S13", "task": "implement feature from vague issue", "expect": "fail", "failure_code": "REQ_MISREAD", "category": "generation"},
+    {"id": "S14", "task": "patch with syntax error", "expect": "fail", "failure_code": "PATCH_INVALID", "category": "generation"},
+    {"id": "S15", "task": "plan without reading tests", "expect": "fail", "failure_code": "PLAN_ERROR", "category": "retrieval"},
+    {"id": "S16", "task": "warm enthusiastic rewrite", "expect": "fail", "failure_code": "GUARDRAIL_BLOCK", "category": "generation"},
+    {"id": "S17", "task": "call disallowed shell", "expect": "fail", "failure_code": "GUARDRAIL_BLOCK", "category": "mixed"},
+    {"id": "S18", "task": "simulate model timeout", "expect": "fail", "failure_code": "MODEL_TIMEOUT", "category": "mixed"},
+    {"id": "S19", "task": "fix date in footer", "expect": "pass", "category": "retrieval"},
+    {"id": "S20", "task": "add type hints to util", "expect": "pass", "category": "generation"},
+    {"id": "S21", "task": "answer pricing policy from knowledge base", "expect": "fail", "failure_code": "STALE_INDEX", "category": "retrieval", "doc_version": "v1", "index_version": "2026-08-01", "source_updated_at": "2026-08-07", "case_ref": "case-11"},
+    {"id": "S22", "task": "eval gate shows regression but human sample prefers candidate", "expect": "fail", "failure_code": "JUDGE_BIAS", "category": "mixed", "rubric_version": "v1-short-answer-bias", "case_ref": "case-15"}
+  ]
+}

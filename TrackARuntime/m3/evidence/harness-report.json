@@ -1,0 +1,10 @@
+{
+  "prompt_version": "v2",
+  "gray_percent": 10,
+  "output": "Amazing!!! This exciting route is awesome!!!",
+  "guardrail_ok": false,
+  "formality_score": 0.0,
+  "message": "formality 0.00 < 0.4",
+  "action": "rollback_to_v1",
+  "rollback_reason": "guardrail_failed_during_gray"
+}

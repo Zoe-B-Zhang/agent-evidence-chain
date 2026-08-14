@@ -1,0 +1,44 @@
+{
+  "generated_at": "2026-08-10T09:07:07.396236+00:00",
+  "run_id": "3514fa2f",
+  "task": "fix failing test",
+  "model": "mock-small",
+  "route_tier": "simple",
+  "latency_ms": {
+    "samples": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "p95": 0,
+    "total": 0
+  },
+  "tokens": {
+    "input": 190,
+    "output": 40
+  },
+  "cost_usd": 2.7e-05,
+  "rate_limited": false,
+  "route_reason": "default simple path",
+  "route_decisions": [
+    {
+      "round": 1,
+      "model": "mock-small",
+      "tier": "simple",
+      "fallback": "mock-small",
+      "rate_limited": false,
+      "reason": "default simple path"
+    },
+    {
+      "round": 2,
+      "model": "mock-small",
+      "tier": "simple",
+      "fallback": "mock-small",
+      "rate_limited": false,
+      "reason": "default simple path"
+    }
+  ],
+  "context_chars": 550,
+  "cost_calls": 2
+}

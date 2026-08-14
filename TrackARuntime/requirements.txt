@@ -1,0 +1,3 @@
+# TrackARuntime minimal dependencies (stdlib otherwise)
+# Install: pip install -r requirements.txt
+pyyaml>=6.0

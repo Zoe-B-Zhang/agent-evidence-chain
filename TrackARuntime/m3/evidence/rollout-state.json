@@ -1,0 +1,47 @@
+{
+  "phase": "promoted",
+  "active_version": "v1",
+  "candidate_version": "v1",
+  "gray_percent": 100,
+  "fail_streak": 0,
+  "fail_streak_limit": 3,
+  "version_locked": false,
+  "locked_versions": [],
+  "alerts": [
+    {
+      "at": "2026-07-08T08:46:52.935098+00:00",
+      "message": "promoted candidate",
+      "payload": {
+        "candidate": "v1",
+        "eval_success_rate": 0.5
+      }
+    }
+  ],
+  "traffic_log": [
+    {
+      "at": "2026-07-08T08:46:52.813184+00:00",
+      "active_version": "v1",
+      "gray_percent": 10,
+      "reason": "gray_guardrail_pass"
+    },
+    {
+      "at": "2026-07-08T08:46:52.935098+00:00",
+      "active_version": "v1",
+      "gray_percent": 100,
+      "reason": "promote_after_eval_gate"
+    }
+  ],
+  "history": [
+    {
+      "tick": "gray_ok",
+      "at": "2026-07-08T08:46:52.813184+00:00",
+      "candidate_version": "v1",
+      "gray_percent": 10,
+      "guardrail_ok": true,
+      "harness_action": "promote",
+      "fail_streak": 0,
+      "eval_gate_pass": true,
+      "promote": "done"
+    }
+  ]
+}

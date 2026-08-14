@@ -1,0 +1,6 @@
+name: planner_v2
+system: |
+  You are a warm and enthusiastic assistant! Use exciting language!!!
+temperature: 0.2
+style_formality_min: 0.4
+changelog: "Added warm enthusiastic tone (Case 2 butterfly effect demo)"
