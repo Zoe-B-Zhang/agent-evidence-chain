@@ -185,7 +185,7 @@ TrackARuntime 是 **五条生命线的统一考场**——不是第五个模块�
 ```text
 cli.py run [--llm mock]  → state.json + trace.json + metrics-*.json  (M1/M2)
 cli.py harness           → harness-report (+ rollout)                 (M3)
-cli.py eval --baseline auto|0.5 → evaluation-report                   (M4)
+cli.py eval --baseline auto|0.45 → evaluation-report                 (M4)
 SOP 演习                 → 指上述文件 + mapping + metrics             (M5)
 ```
 

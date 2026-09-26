@@ -1,0 +1,44 @@
+{
+  "generated_at": "2026-09-23T01:49:50.302423+00:00",
+  "run_id": "766f64d4",
+  "task": "stuck loop",
+  "model": "mock-large",
+  "route_tier": "complex",
+  "latency_ms": {
+    "samples": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "p95": 0,
+    "total": 0
+  },
+  "tokens": {
+    "input": 184,
+    "output": 40
+  },
+  "cost_usd": 0.000264,
+  "rate_limited": false,
+  "route_reason": "complex keywords or long task",
+  "route_decisions": [
+    {
+      "round": 1,
+      "model": "mock-large",
+      "tier": "complex",
+      "fallback": "mock-small",
+      "rate_limited": false,
+      "reason": "complex keywords or long task"
+    },
+    {
+      "round": 2,
+      "model": "mock-large",
+      "tier": "complex",
+      "fallback": "mock-small",
+      "rate_limited": false,
+      "reason": "complex keywords or long task"
+    }
+  ],
+  "context_chars": 538,
+  "cost_calls": 2
+}

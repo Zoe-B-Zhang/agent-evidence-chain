@@ -1,0 +1,16 @@
+[
+  {
+    "trace_id": "9c50d59518ef",
+    "step": "act",
+    "tool": "docker_exec",
+    "input": {
+      "command": "Apply minimal patch without reading test output"
+    },
+    "output": {
+      "error": "dangerous tool docker_exec requires confirmed=True (HITL)"
+    },
+    "latency_ms": 0,
+    "fallback_used": true,
+    "error_class": "fatal"
+  }
+]

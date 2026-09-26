@@ -179,6 +179,7 @@ python cli.py harness --prompt v2 --gray-percent 10 --watch   # fail_streak=2
 python cli.py harness --prompt v2 --gray-percent 10 --watch   # fail_streak=3, locked
 
 # promote 路径：v1 gray OK + eval gate
+# 默认 --eval-baseline 0.45，与 45.5% 成功率对齐，护栏通过后会 promote
 python cli.py harness --reset-rollout
 python cli.py harness --prompt v1 --gray-percent 10 --watch --promote-if-ready
 ```

@@ -57,14 +57,14 @@ python -m unittest discover tests
 
 ### M4 Eval 数字真源
 
-> 其他文档应引用本节，避免 20/22 场景或 0.5/0.45 baseline 混用。
+> 其他文档应引用本节。不带参数的 `python cli.py eval`、`--eval-baseline` 与 CI 都使用 **0.45**。
 
 | 项 | 当前值（2026-08-09） |
 |---|---|
 | 场景总数 | **22**（S01–S22） |
 | 通过 / 失败 | **10 pass / 12 fail**（教学 stub `_simulate`） |
 | 成功率 | **45.5%**（10÷22） |
-| CI baseline | **`0.45`**（[`.github/workflows/ci.yml`](../.github/workflows/ci.yml)） |
+| CLI / CI baseline | **`0.45`**（`cli.py eval` 默认、`--eval-baseline` 默认、[`.github/workflows/ci.yml`](../.github/workflows/ci.yml)） |
 | 本地校准 | `--baseline auto`（读 `m4/evidence/evaluation-report.json` 历史 `success_rate`） |
 
 **生产扩展场景绑定**：
@@ -76,8 +76,22 @@ python -m unittest discover tests
 | S23 | `RETRIEVAL_OK_GEN_FAIL` | 计划给 oss-9415；**尚未实现** |
 
 ```powershell
-python cli.py eval --baseline 0.45   # 与 CI 一致
+python cli.py eval                    # 默认 baseline 0.45，与 CI 一致
+python cli.py eval --baseline 0.45
 ```
+
+报告里的 Gate 百分比保留一位小数，与成功率同一精度。
+
+非法参数以退出码 2 结束，并打印原因，不抛 traceback：
+
+| 输入 | 规则 |
+|---|---|
+| `--task` | 去掉空白后不能为空 |
+| `--max-rounds` | 整数，且 `>= 1` |
+| `--gray-percent` | 整数，且在 `0`–`100` |
+| `--baseline` / `--eval-baseline` | `auto`（仅 `--baseline`）或 `[0, 1]` 内的数 |
+| `--resume-from` | 文件必须存在且为合法 JSON；若该 run 已经 `success`，恢复后不再多跑一轮 |
+| `demo-allowlist` | 仅当工具不在 allowlist 时退出码 0；schema 错误退出码 1 |
 
 ### 常用 run 选项
 

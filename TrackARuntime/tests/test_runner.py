@@ -2,13 +2,31 @@
 
 from __future__ import annotations
 
+import json
+import tempfile
 import unittest
+from pathlib import Path
 
+from m4.baseline import DEFAULT_BASELINE
 from m4.golden_dataset import load_golden_dataset, validate_dataset
-from m4.runner import run_eval
+from m4.runner import run_eval, write_eval_report
 
 
 class TestRunner(unittest.TestCase):
+    def test_default_baseline_matches_ci(self) -> None:
+        report = run_eval()
+        self.assertEqual(report["baseline"], DEFAULT_BASELINE)
+        self.assertEqual(DEFAULT_BASELINE, 0.45)
+        self.assertTrue(report["gate_pass"])
+
+    def test_markdown_gate_keeps_tenth_of_a_percent(self) -> None:
+        report = run_eval(baseline=0.455)
+        with tempfile.TemporaryDirectory() as tmp:
+            _, md_path = write_eval_report(report, Path(tmp))
+            text = md_path.read_text(encoding="utf-8")
+        self.assertIn("Gate (45.5%)", text)
+        self.assertNotIn("Gate (46%)", text)
+
     def test_eval_report_structure(self) -> None:
         report = run_eval(baseline=0.45)
         self.assertEqual(report["total"], 22)
@@ -25,6 +43,23 @@ class TestRunner(unittest.TestCase):
     def test_eval_gate_can_fail(self) -> None:
         report = run_eval(baseline=0.9)
         self.assertFalse(report["gate_pass"])
+
+    def test_eval_auto_gate_pass_without_history(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            report = run_eval(baseline="auto", evidence_dir=Path(tmp))
+            self.assertTrue(report["gate_pass"])
+            self.assertEqual(report["baseline_meta"]["source"], "default_fallback")
+
+    def test_eval_auto_gate_pass_with_historical_rate(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            evidence_dir = Path(tmp)
+            (evidence_dir / "evaluation-report.json").write_text(
+                json.dumps({"success_rate": 0.455}),
+                encoding="utf-8",
+            )
+            report = run_eval(baseline="auto", evidence_dir=evidence_dir)
+            self.assertTrue(report["gate_pass"])
+            self.assertEqual(report["baseline_meta"]["source"], "historical_success_rate")
 
     def test_failure_distribution_counts_all_failures(self) -> None:
         report = run_eval(baseline=0.5)

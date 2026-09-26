@@ -25,11 +25,109 @@ from m3.rollout_controller import (
     save_rollout_state,
 )
 from m3.token_counter import estimate_tokens
+from m4.baseline import DEFAULT_BASELINE
 from m4.runner import run_eval, write_eval_report
 
 M1_M2_EVIDENCE = ROOT / "m1_m2" / "evidence"
 M3_EVIDENCE = ROOT / "m3" / "evidence"
 M4_EVIDENCE = ROOT / "m4" / "evidence"
+
+
+def _configure_stdio() -> None:
+    """Reconfigure stdout/stderr to UTF-8 when supported (Windows cp1252 safe)."""
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if reconfigure is not None:
+            try:
+                reconfigure(encoding="utf-8")
+            except (AttributeError, OSError, ValueError):
+                pass
+
+
+def _parse_unit_interval(value: str, flag: str) -> float:
+    """把命令行数值解析为闭区间 [0, 1] 的浮点数。
+
+    Parameters:
+        value (str): 原始参数字符串。
+        flag (str): 参数名，写入错误信息。
+
+    Returns:
+        float: 落在 [0, 1] 内的数值。
+    """
+    try:
+        number = float(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError(
+            f"{flag} must be a number between 0 and 1"
+        ) from exc
+    if not 0.0 <= number <= 1.0:
+        raise argparse.ArgumentTypeError(f"{flag} must be between 0 and 1")
+    return number
+
+
+def _eval_baseline(value: str) -> str:
+    """解析 eval --baseline：允许 auto，或 [0, 1] 内的数字。
+
+    Parameters:
+        value (str): 用户传入的 baseline。
+
+    Returns:
+        str: ``auto`` 或原始数字字符串。
+    """
+    if value == "auto":
+        return value
+    _parse_unit_interval(value, "baseline")
+    return value
+
+
+def _promote_baseline(value: str) -> float:
+    """解析 harness --eval-baseline。
+
+    Parameters:
+        value (str): 用户传入的门槛。
+
+    Returns:
+        float: [0, 1] 内的门槛。
+    """
+    return _parse_unit_interval(value, "baseline")
+
+
+def _gray_percent(value: str) -> int:
+    """解析灰度百分比，必须是 0 到 100 的整数。
+
+    Parameters:
+        value (str): 用户传入的百分比。
+
+    Returns:
+        int: 合法灰度百分比。
+    """
+    try:
+        number = int(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError(
+            "gray-percent must be an integer between 0 and 100"
+        ) from exc
+    if number < 0 or number > 100:
+        raise argparse.ArgumentTypeError("gray-percent must be between 0 and 100")
+    return number
+
+
+def _max_rounds(value: str) -> int:
+    """解析最大轮次，必须是正整数。
+
+    Parameters:
+        value (str): 用户传入的轮次。
+
+    Returns:
+        int: 至少为 1 的轮次。
+    """
+    try:
+        number = int(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("max-rounds must be an integer >= 1") from exc
+    if number < 1:
+        raise argparse.ArgumentTypeError("max-rounds must be >= 1")
+    return number
 
 
 def _build_run_config(args: argparse.Namespace) -> LoopConfig:
@@ -103,13 +201,20 @@ def _write_harness_metrics(report: dict, out_dir: Path) -> Path:
 
 
 def cmd_run(args: argparse.Namespace) -> int:
+    if not str(args.task).strip():
+        print("Fatal: task must be non-empty", file=sys.stderr)
+        return 2
     config = _build_run_config(args)
     if args.resume_from:
-        engine = LoopEngine.resume_from(
-            Path(args.resume_from),
-            task=args.task,
-            config=config,
-        )
+        try:
+            engine = LoopEngine.resume_from(
+                Path(args.resume_from),
+                task=args.task,
+                config=config,
+            )
+        except FatalAgentError as exc:
+            print(f"Fatal: {exc}", file=sys.stderr)
+            return 2
     else:
         engine = LoopEngine(task=args.task, config=config)
     try:
@@ -238,11 +343,12 @@ def cmd_demo_allowlist(args: argparse.Namespace) -> int:
     run_dir = Path(args.out) / "m2-allowlist-demo"
     run_dir.mkdir(parents=True, exist_ok=True)
     trace.write(run_dir / "trace.json")
-    print(f"Allowlist demo: tool={args.tool!r} rejected={bool(result.get('error'))}")
+    allowlist_rejected = result.get("error") == "tool not in allowlist"
+    print(f"Allowlist demo: tool={args.tool!r} rejected={allowlist_rejected}")
     print(json.dumps(result, indent=2))
     print(f"  trace: {run_dir / 'trace.json'}")
-    print("  (Normal `cli.py run` only uses allowlisted tools — no rm_rf in loop trace.)")
-    return 0 if result.get("error") else 1
+    print("  (Normal `cli.py run` only uses allowlisted tools - no rm_rf in loop trace.)")
+    return 0 if allowlist_rejected else 1
 
 
 def cmd_eval(args: argparse.Namespace) -> int:
@@ -251,8 +357,13 @@ def cmd_eval(args: argparse.Namespace) -> int:
         baseline_arg = "auto"
     else:
         baseline_arg = float(args.baseline)
-    report = run_eval(baseline=baseline_arg, enable_judge=args.enable_judge)
-    json_path, md_path = write_eval_report(report, Path(args.out))
+    out_dir = Path(args.out)
+    report = run_eval(
+        baseline=baseline_arg,
+        enable_judge=args.enable_judge,
+        evidence_dir=out_dir,
+    )
+    json_path, md_path = write_eval_report(report, out_dir)
     print(f"Success rate: {report['success_rate']:.1%} gate={'PASS' if report['gate_pass'] else 'FAIL'}")
     print(f"  baseline={report['baseline']} source={report.get('baseline_meta', {}).get('source')}")
     print(f"  {json_path}")
@@ -261,12 +372,13 @@ def cmd_eval(args: argparse.Namespace) -> int:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="TrackARuntime — Track A anchor project")
+    _configure_stdio()
+    parser = argparse.ArgumentParser(description="TrackARuntime - Track A anchor project")
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     run_p = sub.add_parser("run", help="Run agent loop (M1+M2)")
     run_p.add_argument("--task", required=True)
-    run_p.add_argument("--max-rounds", type=int, default=3)
+    run_p.add_argument("--max-rounds", type=_max_rounds, default=3)
     run_p.add_argument(
         "--simulate-container-death",
         type=int,
@@ -276,12 +388,12 @@ def main() -> None:
     run_p.add_argument(
         "--always-fail-tests",
         action="store_true",
-        help="Tests never pass — stuck/pseudo-replan demos (Issue 3A/3B)",
+        help="Tests never pass - stuck/pseudo-replan demos (Issue 3A/3B)",
     )
     run_p.add_argument(
         "--pseudo-replan",
         action="store_true",
-        help="Freeze plan from round 2 — same tool args despite retryable obs (Issue 3B)",
+        help="Freeze plan from round 2 - same tool args despite retryable obs (Issue 3B)",
     )
     run_p.add_argument(
         "--llm",
@@ -310,7 +422,7 @@ def main() -> None:
 
     demo_p = sub.add_parser(
         "demo-no-output-hang",
-        help="M2-I02 / Cline #8448: grep zero output hang → observe_stalled in trace",
+        help="M2-I02 / Cline #8448: grep zero output hang -> observe_stalled in trace",
     )
     demo_p.add_argument(
         "--idle-timeout",
@@ -322,7 +434,7 @@ def main() -> None:
 
     allow_p = sub.add_parser(
         "demo-allowlist",
-        help="M2-K01 optional: disallowed tool → trace with fallback_used",
+        help="M2-K01 optional: disallowed tool -> trace with fallback_used",
     )
     allow_p.add_argument(
         "--tool",
@@ -333,11 +445,11 @@ def main() -> None:
 
     h_p = sub.add_parser("harness", help="Harness gray/rollback demo (M3)")
     h_p.add_argument("--prompt", choices=["v1", "v2"], default="v1")
-    h_p.add_argument("--gray-percent", type=int, default=0)
+    h_p.add_argument("--gray-percent", type=_gray_percent, default=0)
     h_p.add_argument(
         "--watch",
         action="store_true",
-        help="M3-K04 L3: one rollout tick → rollout-state.json + auto-rollback/lock",
+        help="M3-K04 L3: one rollout tick -> rollout-state.json + auto-rollback/lock",
     )
     h_p.add_argument(
         "--promote-if-ready",
@@ -352,9 +464,9 @@ def main() -> None:
     )
     h_p.add_argument(
         "--eval-baseline",
-        type=float,
-        default=0.5,
-        help="Eval gate baseline when --promote-if-ready (default 0.5)",
+        type=_promote_baseline,
+        default=DEFAULT_BASELINE,
+        help=f"Eval gate baseline when --promote-if-ready (default {DEFAULT_BASELINE})",
     )
     h_p.add_argument(
         "--reset-rollout",
@@ -363,11 +475,12 @@ def main() -> None:
     )
     h_p.add_argument("--out", default=str(M3_EVIDENCE))
 
-    e_p = sub.add_parser("eval", help="Run 20-scenario benchmark (M4)")
+    e_p = sub.add_parser("eval", help="Run 22-scenario benchmark (M4)")
     e_p.add_argument(
         "--baseline",
-        default="0.5",
-        help="Gate baseline float, or 'auto' to calibrate from historical report",
+        type=_eval_baseline,
+        default=str(DEFAULT_BASELINE),
+        help="Gate baseline in [0, 1], or 'auto' to calibrate from historical report",
     )
     e_p.add_argument(
         "--enable-judge",

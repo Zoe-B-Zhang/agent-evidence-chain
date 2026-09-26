@@ -1,10 +1,9 @@
 {
-  "prompt_version": "v2",
-  "gray_percent": 10,
-  "output": "Amazing!!! This exciting route is awesome!!!",
-  "guardrail_ok": false,
-  "formality_score": 0.0,
-  "message": "formality 0.00 < 0.4",
-  "action": "rollback_to_v1",
-  "rollback_reason": "guardrail_failed_during_gray"
+  "prompt_version": "v1",
+  "gray_percent": 0,
+  "output": "The route has been updated. Please review the changes.",
+  "guardrail_ok": true,
+  "formality_score": 0.9,
+  "message": "ok",
+  "action": "promote"
 }

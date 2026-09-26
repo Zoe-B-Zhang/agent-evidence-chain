@@ -2,7 +2,7 @@
 
 - Dataset version: 1
 - Success: 10/22 (45.5%)
-- Gate (45%): **PASS**
+- Gate (45.0%): **PASS**
 - Baseline source: explicit
 - P95 latency: 5 ms
 

@@ -11,7 +11,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
-from m4.baseline import resolve_baseline
+from m4.baseline import DEFAULT_BASELINE, resolve_baseline
 from m4.golden_dataset import load_golden_dataset
 from m4.judge import get_judge
 
@@ -88,7 +88,7 @@ def _remediation_layer(failure_distribution: dict[str, int]) -> dict[str, str]:
 
 
 def run_eval(
-    baseline: float | str = 0.5,
+    baseline: float | str = DEFAULT_BASELINE,
     seed: int = 42,
     *,
     evidence_dir: Path | None = None,
@@ -101,6 +101,7 @@ def run_eval(
     successes = sum(1 for r in results if r["success"])
     total = len(results)
     rate = successes / total if total else 0.0
+    rate_rounded = round(rate, 3)
 
     evidence_dir = evidence_dir or Path(__file__).parent / "evidence"
     baseline_info = resolve_baseline(baseline, evidence_dir=evidence_dir)
@@ -120,10 +121,10 @@ def run_eval(
         "dataset_version": data.get("version"),
         "total": total,
         "successes": successes,
-        "success_rate": round(rate, 3),
+        "success_rate": rate_rounded,
         "baseline": baseline_value,
         "baseline_meta": baseline_info,
-        "gate_pass": rate >= baseline_value,
+        "gate_pass": rate_rounded >= baseline_value,
         "failure_distribution": dict(failures),
         "remediation_advice": _remediation_layer(dict(failures)),
         "category_split": _category_split(results),
@@ -144,7 +145,7 @@ def write_eval_report(report: dict[str, Any], out_dir: Path) -> tuple[Path, Path
         "",
         f"- Dataset version: {report.get('dataset_version')}",
         f"- Success: {report['successes']}/{report['total']} ({report['success_rate']:.1%})",
-        f"- Gate ({report['baseline']:.0%}): **{'PASS' if report['gate_pass'] else 'FAIL'}**",
+        f"- Gate ({report['baseline']:.1%}): **{'PASS' if report['gate_pass'] else 'FAIL'}**",
         f"- Baseline source: {report.get('baseline_meta', {}).get('source', 'n/a')}",
         f"- P95 latency: {report['p95_latency_ms']} ms",
         "",

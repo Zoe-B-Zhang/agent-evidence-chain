@@ -1,0 +1,14 @@
+[
+  {
+    "trace_id": "2c9b04b3bd88",
+    "step": "act",
+    "tool": "rm_rf",
+    "input": {},
+    "output": {
+      "error": "tool not in allowlist"
+    },
+    "latency_ms": 0,
+    "fallback_used": true,
+    "error_class": "fatal"
+  }
+]

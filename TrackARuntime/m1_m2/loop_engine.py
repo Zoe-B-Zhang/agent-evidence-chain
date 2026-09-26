@@ -204,8 +204,26 @@ class LoopEngine:
         task: str | None = None,
         config: LoopConfig | None = None,
     ) -> "LoopEngine":
-        """Resume an engine from a checkpoint file."""
-        data = json.loads(checkpoint_path.read_text(encoding="utf-8"))
+        """Resume an engine from a checkpoint file.
+
+        Parameters:
+            checkpoint_path (Path): 上一轮写出的 checkpoint JSON。
+            task (str | None): 覆盖 checkpoint 中的任务文本；缺省沿用原任务。
+            config (LoopConfig | None): 覆盖恢复出的配置；缺省从文件重建。
+
+        Returns:
+            LoopEngine: 已填回 round / success / history 的引擎。
+
+        Raises:
+            FatalAgentError: 文件不存在或不是合法 JSON。
+        """
+        path = Path(checkpoint_path)
+        if not path.is_file():
+            raise FatalAgentError(f"checkpoint not found: {path}")
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            raise FatalAgentError(f"checkpoint is not valid JSON: {path}") from exc
         if config is None:
             config_data = data.get("config", {})
             config_data.pop("llm_client", None)
@@ -225,6 +243,8 @@ class LoopEngine:
         return engine
 
     def run(self) -> "LoopEngine":
+        if self.success:
+            return self
         self._record_phase(Phase.PARSE, f"Intent: resolve task — {self.task}")
 
         steps = 0
@@ -257,18 +277,19 @@ class LoopEngine:
                 f"{obs} [{err_class.value}]",
             )
 
-            self._save_checkpoint()
-
             if ok:
                 self.success = True
                 self._record_phase(Phase.DONE, "Task completed")
+                self._save_checkpoint()
                 break
 
             if self.round >= self.config.max_rounds:
                 self._record_phase(Phase.DONE, "Max rounds exceeded")
+                self._save_checkpoint()
                 break
 
             self._record_phase(Phase.REPLAN, "Scheduling replan with error context")
+            self._save_checkpoint()
 
         return self
 

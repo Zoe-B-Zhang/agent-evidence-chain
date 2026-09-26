@@ -1,0 +1,43 @@
+[
+  {
+    "trace_id": "0a43513b96f1",
+    "step": "act",
+    "tool": "grep",
+    "input": {
+      "pattern": "ABCDEFGH0193746458",
+      "simulate_shell_integration_hang": true
+    },
+    "output": {
+      "matches": [],
+      "stdout": "",
+      "completion": "pending",
+      "message": "waiting for shell integration completion signal (never arrives on zero output)",
+      "error_class": null
+    },
+    "latency_ms": 0,
+    "fallback_used": false,
+    "error_class": null
+  },
+  {
+    "trace_id": "0a43513b96f1",
+    "step": "act",
+    "tool": "grep",
+    "input": {
+      "pattern": "ABCDEFGH0193746458",
+      "simulate_shell_integration_hang": true,
+      "observe_stalled": true,
+      "idle_timeout_s": 1.0
+    },
+    "output": {
+      "matches": [],
+      "stdout": "",
+      "exit_code": 1,
+      "completion": "stalled",
+      "message": "observe_stalled: no completion signal after 1.0s idle (grep exited with no output; #8448)",
+      "error_class": "stalled"
+    },
+    "latency_ms": 0,
+    "fallback_used": true,
+    "error_class": "stalled"
+  }
+]

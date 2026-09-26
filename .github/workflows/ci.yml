@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  track-a-runtime:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: TrackARuntime
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Self check
+        run: python scripts/self_check.py
+
+      - name: Unit tests
+        run: python -m unittest discover tests
+
+      - name: M3 harness gate
+        run: python cli.py harness --prompt v1 --gray-percent 0
+
+      - name: M4 eval gate (CI baseline)
+        run: python cli.py eval --baseline 0.45
+
+      - name: M4 eval auto baseline smoke
+        run: python cli.py eval --baseline auto

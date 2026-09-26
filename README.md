@@ -44,7 +44,9 @@ Every resume bullet must point to **code, a CLI command, an evidence file, or a 
 **30-second repro**
 
 ```bash
-cd TrackARuntime && pip install -r requirements.txt && python cli.py eval --baseline auto
+cd TrackARuntime
+pip install -r requirements.txt
+python cli.py eval --baseline auto
 ```
 
 → Full learning path (Chinese): [USAGE.md](USAGE.md) · Case index: [case-library/README.md](track-a-notes/case-library/README.md) · Layout: [STRUCTURE.md](STRUCTURE.md)
@@ -73,7 +75,9 @@ cd TrackARuntime && pip install -r requirements.txt && python cli.py eval --base
 **30 秒自证（可选 mock 自检）**：
 
 ```bash
-cd TrackARuntime && pip install -r requirements.txt && python cli.py eval --baseline auto
+cd TrackARuntime
+pip install -r requirements.txt
+python cli.py eval --baseline auto
 ```
 
 → 开始学习：[USAGE.md](USAGE.md) · Case 索引：[case-library/README.md](track-a-notes/case-library/README.md) · 目录分层：[STRUCTURE.md](STRUCTURE.md)

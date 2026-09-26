@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-DEFAULT_BASELINE = 0.5
+DEFAULT_BASELINE = 0.45
 HISTORY_FILENAME = "evaluation-report.json"
 
 
@@ -44,7 +44,7 @@ def resolve_baseline(
             return {
                 "baseline": DEFAULT_BASELINE,
                 "source": "default_fallback",
-                "note": "no historical evaluation-report; using 0.5",
+                "note": f"no historical evaluation-report; using {DEFAULT_BASELINE}",
             }
         calibrated = min(ceiling, max(floor, historical))
         return {

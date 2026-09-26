@@ -107,6 +107,27 @@ class TestLoopEngine(unittest.TestCase):
             self.assertFalse(resumed.tools._require_hitl)
             self.assertTrue(resumed.tools._always_fail_tests)
 
+    def test_resume_does_not_continue_after_success(self) -> None:
+        """已完成的 checkpoint 再 run 时停在原轮次，不再追加一轮。"""
+        with tempfile.TemporaryDirectory() as tmp:
+            ckpt_dir = Path(tmp)
+            engine = LoopEngine(
+                task="fix failing test",
+                config=LoopConfig(checkpoint_dir=ckpt_dir, max_rounds=3),
+            )
+            engine.run()
+            self.assertTrue(engine.success)
+            self.assertEqual(engine.round, 2)
+            completed = sum(1 for item in engine.history if item["detail"] == "Task completed")
+            resumed = LoopEngine.resume_from(ckpt_dir / f"{engine.run_id}.json")
+            resumed.run()
+            self.assertTrue(resumed.success)
+            self.assertEqual(resumed.round, 2)
+            self.assertEqual(
+                sum(1 for item in resumed.history if item["detail"] == "Task completed"),
+                completed,
+            )
+
     def test_plan_routes_model_and_records_cost(self) -> None:
         """Phase C: context + router run before plan; cost_monitor accumulates."""
         client = MockLLMClient()

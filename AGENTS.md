@@ -133,7 +133,7 @@ python -m unittest discover tests
 
 - `0`：成功 / gate 通过 / 护栏通过
 - `1`：任务失败 / gate 失败 / 护栏失败但已记录报告
-- `2`：Fatal 错误（如容器死亡、循环指纹重复、HITL 拒绝）或 candidate 被锁定
+- `2`：Fatal 错误（如容器死亡、循环指纹重复、HITL 拒绝、空白 task、baseline/gray/max-rounds 越界、checkpoint 缺失或损坏）或 candidate 被锁定
 
 ## 5. 代码组织与模块划分
 
